@@ -1,0 +1,4 @@
+*.pyc
+*.db
+lasterror.log
+youtube_request_headers.txt
