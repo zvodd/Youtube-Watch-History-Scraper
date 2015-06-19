@@ -51,9 +51,8 @@ class ChromeRequest(object):
 		if url != None:
 			self.url = url
 
-		# if "user-agent" in iheaders:
-		# 	self.user_agent = iheaders["user-agent"]
-
+		if "user-agent" in headers:
+			self.user_agent = headers["user-agent"]
 
 	def gen_url(self):
 		required_keys = ['authority', 'path', 'scheme']

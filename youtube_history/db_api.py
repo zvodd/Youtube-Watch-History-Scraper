@@ -8,13 +8,6 @@ from datetime import datetime
 
 Base = declarative_base()
 
-class RawPage(Base):
-	__tablename__ = 'rawpage'
-	id = Column(Integer, primary_key=True)
-	time = Column(DateTime, nullable=False)
-	content = Column(String, nullable=False)
-
-
 class HistoryEntry(Base):
 	__tablename__ = 'videoshistory'
 	id = Column(Integer, primary_key=True)
@@ -23,7 +16,6 @@ class HistoryEntry(Base):
 	title = Column(String, nullable=False)
 	description = Column(String)
 	time = Column(Integer, nullable=False)
-
 
 class AppDatabase(object):
 	youtube_db_name = "/youtube_history.db"
@@ -56,22 +48,6 @@ class AppDatabase(object):
 			raise
 		finally:
 			session.close()
-
-	def push_page(self, content):
-		with self._session_scope(commit = True) as session:
-			rp = RawPage()
-			rp.time = datetime.now()
-			rp.content = content
-			session.add(rp)
-
-	def get_total_raw_pages(self):
-		with self._session_scope( commit = False) as session:
-			return session.query(func.count(RawPage.id)).scalar()
-
-	def get_raw_page(self, n):
-		with self._session_scope( commit = False) as session:
-			rp = session.query(RawPage).order_by(desc(RawPage.time)).offset(n).limit(1)[0]
-			return rp.content
 
 	def push_video_entry(self, vid, author_id, title, description, time):
 		with self._session_scope(commit = True) as session:
