@@ -8,6 +8,7 @@ information back out of the database.
 
 ## Python library dependencies
 * [scrapy](http://scrapy.org/)
+    * [pywin32](http://sourceforge.net/projects/pywin32/) aka **win32api** Required for scrapy on windows.
 * [lxml](http://lxml.de/)
 * [sqlalchemy](http://www.sqlalchemy.org/)
 
@@ -17,8 +18,20 @@ information back out of the database.
 
 	pip install scrapy lxml sqlalchemy
 
-### Getting session cookies and headers:
+Windows users: You will need to install [pywin32](http://sourceforge.net/projects/pywin32/) manually; i.e. follow the link and get the installer.
+
+### Getting session cookies:
+
+* Install the browser extension [editThisCookie](http://www.editthiscookie.com/).
+
+* Using the same browser, goto [Youtube.com](http://www.youtube.com) and ensure you are logged in.
+
+* Click the "editThisCookie" button, then click export. The cookies are now on you clipboard.
+
+* Create the file "**youtube_cookies.json**" in this directory, then paste and save.
 	
+## Alternitive method:
+
 * Open chrome / chromium
 
 * Make sure your logged into youtube.com
@@ -34,6 +47,8 @@ information back out of the database.
 * Copy the section "Request Headers", below the title "Request Headers"
 
 * Paste into a new file called "youtube_request_headers.txt" in this directory
+
+* In the **settings.py** file comment the "**COOKIES\_JSON**" line and uncomment the "**CHROME\_HEADERS\_FILE**" line.
 
 ### Run Scrapy:
 
@@ -57,6 +72,6 @@ Or use ipython and sqlalchemy:
 #### You can avoid the database output entirely
 Just remove the line:
 
-    'youtube_history.pipelines.DbOutputPipeline': 800,
+    'youtube_history.pipelines.DbOutputPipeline': 901,
 
 From the ***settings.py*** file.

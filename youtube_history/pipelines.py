@@ -7,6 +7,12 @@
 
 from scrapy.exceptions import DropItem
 
+class CleanUpHistoryEntriesPipeline(object):
+    def proccess_items(self, item, spider):
+        item['vid'] = item['vid'].replace('/watch?v=', '')
+        # item['author_id'] = item['author_id'].replace('/user/', '')
+        # item['author_id'] = item['author_id'].replace('/channel/', '')
+        return item
 
 class ConvertVideoTimePipeline(object):
     def process_item(self, item, spider):
@@ -33,7 +39,6 @@ class DbOutputPipeline(object):
     def __init__(self, *args, **kwargs):
         super(DbOutputPipeline, *args, **kwargs)
         from youtube_history import db_api
-        print "initing"
         self.db = db_api.AppDatabase();
 
     def process_item(self, item, spider):
