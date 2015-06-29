@@ -19,7 +19,7 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'youtube_history.pipelines.ConvertVideoTimePipeline': 301,
     'youtube_history.pipelines.CleanUpHistoryEntriesPipeline': 302,
-    # 'youtube_history.pipelines.DbOutputPipeline': 901,
+    'youtube_history.pipelines.DbOutputPipeline': 901,
 }
 
 # CHROME_HEADERS_FILE = "youtube_request_headers.txt"
