@@ -1,5 +1,7 @@
-## What is it?
-Command line YouTube watch history scraper written in Python 2.7.
+## Youtube History Scraper
+A command line scraper written in Python 2.7 using scrapy and lxml.
+Scrapes your YouTube History into a searchable SQLite database, so you can search for something you've previously watched.
+Allowing search by video length, date published, video description, video title, etc.
 Uses pre logged in session cookies extracted from chrome.
 
 This is just an experimental project. The database design isn't 
@@ -20,6 +22,8 @@ information back out of the database.
 
 Windows users: You will need to install [pywin32](http://sourceforge.net/projects/pywin32/) manually; i.e. follow the link and get the installer.
 
+You'll need a session cookie from your web broweser, so the scraper can use your account to get your history.
+
 ### Getting session cookies:
 
 * Install the browser extension [editThisCookie](http://www.editthiscookie.com/).
@@ -30,7 +34,7 @@ Windows users: You will need to install [pywin32](http://sourceforge.net/project
 
 * Create the file "**youtube_cookies.json**" in this directory, then paste and save.
 	
-## Alternitive method:
+### Alternitive (cookies) method:
 
 * Open chrome / chromium
 
@@ -57,9 +61,10 @@ Windows users: You will need to install [pywin32](http://sourceforge.net/project
 ## Profit?
 
 You can search it manually in your favorite database browser
-See [DB Browser for SQLite](http://sqlitebrowser.org/) to make use of db.
+See [DB Browser for SQLite](http://sqlitebrowser.org/).
+This way you can see the results in a table and use SQL statements to search it.
 
-Or use ipython and sqlalchemy:
+Or use ipython and sqlalchemy, this example outputs all videos > 7 minutes in length:
 
 	from db_api import *
 	db = AppDatabase()
@@ -68,10 +73,10 @@ Or use ipython and sqlalchemy:
 	for he in h_entries.all():                                            
 		print "{t} (http://youtube.com/watch?v={v})".format(t=he.title, v=he.vid) 
 
+The ````db_api```` module is just a wrapper around a sqlalchemy model and session.
+````db._session_scope()```` gives you a sqlalchemy session you can run queries on, as shown above.
 
 #### You can avoid the database output entirely
-Just remove the line:
+From the ***settings.py*** file just remove the line:
 
     'youtube_history.pipelines.DbOutputPipeline': 901,
-
-From the ***settings.py*** file.
