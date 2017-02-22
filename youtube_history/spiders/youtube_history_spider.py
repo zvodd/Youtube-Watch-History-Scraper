@@ -1,3 +1,4 @@
+from __future__ import print_function
 import scrapy
 from scrapy.utils.project import get_project_settings
 # from ipdb import set_trace as debug
@@ -42,9 +43,10 @@ class YoutubeHistorySpider(scrapy.Spider):
 
 
     def parse_startpage(self, response):
-        next_uri = self.sub_parse_next_link(response.body)
-        if response.body.find("viewable when signed out") != -1:
-            print "\n"*2," No Sign In" ,"\n"*2,
+        body = response.body_as_unicode()
+        next_uri = self.sub_parse_next_link(body)
+        if body.find("viewable when signed out") != -1:
+            print("\n"*2," No Sign In" ,"\n")
             raise scrapy.exceptions.CloseSpider(reason='Not signed in on first page')
         if next_uri:
             yield self.next_request(next_uri, response)
@@ -63,12 +65,12 @@ class YoutubeHistorySpider(scrapy.Spider):
     def next_request(self, next_uri, response):
         """A wrapper around 'scrapy.Request' """
         return scrapy.Request(self.my_base_url+next_uri, cookies=self.init_cookies,
-        						callback=self.parse)
+                                callback=self.parse)
 
 
     def parse(self, response):
-        if ('application/json' in response.headers['content-type']):
-            jdat = json.loads(response.body)
+        if (b'application/json' in response.headers['Content-Type']):
+            jdat = json.loads(response.body_as_unicode())
             if ('load_more_widget_html' in jdat):
                 next_uri = self.sub_parse_next_link(jdat['load_more_widget_html'])
                 if jdat['load_more_widget_html'].find("viewable when signed out") != -1:
