@@ -48,6 +48,8 @@ class YoutubeHistorySpider(scrapy.Spider):
         if body.find("viewable when signed out") != -1:
             print("\n"*2," No Sign In" ,"\n")
             raise scrapy.exceptions.CloseSpider(reason='Not signed in on first page')
+        for i in self.sub_parse_video_entries(body):
+            yield i
         if next_uri:
             yield self.next_request(next_uri, response)
 
