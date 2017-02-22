@@ -14,7 +14,7 @@ SPIDER_MODULES = ['youtube_history.spiders']
 NEWSPIDER_MODULE = 'youtube_history.spiders'
 COOKIES_ENABLED = True
 DOWNLOADER_MIDDLEWARES = {
-	'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware' : 500
+	'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware' : 500
 }
 ITEM_PIPELINES = {
     'youtube_history.pipelines.ConvertVideoTimePipeline': 301,
