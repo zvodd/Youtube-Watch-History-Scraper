@@ -11,11 +11,13 @@ Base = declarative_base()
 class HistoryEntry(Base):
 	__tablename__ = 'videoshistory'
 	id = Column(Integer, primary_key=True)
-	vid = Column(String, nullable=False) 
-	author_id = Column(String, nullable=False)
-	title = Column(String, nullable=False)
-	description = Column(String)
-	time = Column(Integer, nullable=False)
+	vid = Column(Integer, primary_key=True)
+	channel = Column(Integer, primary_key=True)
+	channel_url = Column(Integer, primary_key=True)
+	title = Column(Integer, primary_key=True)
+	description = Column(Integer, primary_key=True)
+	time = Column(Integer, primary_key=True)
+	date = Column(Integer, primary_key=True)
 
 class AppDatabase(object):
 	youtube_db_name = "/youtube_history.db"
@@ -49,12 +51,14 @@ class AppDatabase(object):
 		finally:
 			session.close()
 
-	def push_video_entry(self, vid, author_id, title, description, time):
+	def push_video_entry(self, vid, channel, channel_url, title, description, time, date):
 		with self._session_scope(commit = True) as session:
 			he = HistoryEntry()
 			he.vid = vid
-			he.author_id = author_id
+			he.channel = channel
+			he.channel_url = channel_url
 			he.title = title
 			he.description = description
 			he.time = time
+			he.date = date
 			session.add(he)

@@ -1,7 +1,8 @@
 import json
+from io import IOBase
 
 def get_clipboard():
-    from Tkinter import Tk
+    from tkinter import Tk
     root = Tk()
     root.withdraw()
     clipboard = root.clipboard_get()
@@ -31,7 +32,7 @@ def main():
     parser.add_argument('domains', type=str, nargs='*', default=None)
     args = parser.parse_args()
     
-    if 'file' in args and isinstance(args.file, file):
+    if 'file' in args and isinstance(args.file, IOBase):
         cstring = args.file.read()
         args.file.close()
     elif args.clip:

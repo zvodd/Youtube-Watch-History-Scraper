@@ -18,12 +18,14 @@ class ChromeRequest(object):
 		"""
 		instance = None
 		hlines = None
-		if isinstance(ifile, (file)):
-			hlines = ifile.readlines()
-		elif isinstance(ifile, basestring):
-			with open(ifile, 'r') as fh:
-				hlines = fh.readlines()
-
+		try:
+			if isinstance(ifile, str):
+				with open(ifile, 'r') as fh:
+					hlines = fh.readlines()
+			else:
+				hlines = ifile.readlines()
+		except Exception as e:
+			print(e)
 		if hlines != None:
 			instance = cls(hlines, **kwargs)
 		return instance
