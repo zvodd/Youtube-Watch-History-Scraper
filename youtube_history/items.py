@@ -12,7 +12,9 @@ class YoutubeHistoryItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     vid = scrapy.Field()
-    author_id = scrapy.Field()
+    channel = scrapy.Field()
+    channel_url = scrapy.Field()
     title = scrapy.Field()
     description = scrapy.Field()
     time = scrapy.Field()
+    date = scrapy.Field()
