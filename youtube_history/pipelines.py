@@ -8,7 +8,6 @@
 from scrapy.exceptions import DropItem
 import string
 from datetime import date, datetime, timedelta
-import re
 
 
 class ConvertDatesPipeline(object):
@@ -18,8 +17,6 @@ class ConvertDatesPipeline(object):
 
     def date_parsing(self, datestring):
         today = date.today()
-        # generates dictionary of form {'[day_name]:[date]' ... }
-        # for dates within the week
         weekdays = {
             (today - timedelta(i)).strftime("%A"): today - timedelta(i)
             for i in range(2, 7)
@@ -27,14 +24,12 @@ class ConvertDatesPipeline(object):
         weekdays["Today"] = today
         weekdays["Yesterday"] = today - timedelta(1)
 
-        # RegEx for gettig dates
-        date_re = re.compile(
+        re1 = re.compile(
             r"([JFMASOND][aepuco][nbrylgptvc]) (\d{1,2})(, 2\d{3})*")
-
         if datestring in weekdays.keys():
             return weekdays[datestring]
         else:
-            m = date_re.match(datestring)
+            m = re1.match(datestring)
             if m.groups()[2] is None:
                 datestring += f", {today.year}"
             return datetime.strptime(datestring, "%b %d, %Y").date()
