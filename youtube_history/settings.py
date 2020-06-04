@@ -19,12 +19,10 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'youtube_history.pipelines.ConvertVideoTimePipeline': 301,
     'youtube_history.pipelines.CleanUpHistoryEntriesPipeline': 302,
-    # 'youtube_history.pipelines.DbOutputPipeline': 901,
 }
 
-CHROME_HEADERS_FILE = "youtube_request_headers.txt"
-# COOKIES_JSON = "youtube_cookies.json"
+CHROME_HEADERS_FILE = "resources/youtube_request_headers.txt"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = ('Youtube-Watch-History-Scraper ' +
-			 '(+https://github.com/AB1908/Youtube-Watch-History-Scraper)')
+USER_AGENT = ('Youtube-History-Scraper ' +
+			 '(+https://github.com/derectoverso/Youtube-Watch-History-Scraper/')

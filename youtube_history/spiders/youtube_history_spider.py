@@ -1,6 +1,5 @@
 import scrapy
 from scrapy.utils.project import get_project_settings
-# from ipdb import set_trace as debug
 from youtube_history.items import YoutubeHistoryItem
 from youtube_history.request_object_parser import ChromeRequest
 from scrapy.http.cookies import CookieJar
@@ -14,7 +13,7 @@ class YoutubeHistorySpider(scrapy.Spider):
 
     nextlink_egg = 'data-uix-load-more-href="/browse_ajax?action_continuation'
     
-    name = 'yth_spider'
+    name = 'youtube_history'
     def __init__(self, *args, **kwargs):
         super(YoutubeHistorySpider, self).__init__(*args, **kwargs)
         settings = get_project_settings()
