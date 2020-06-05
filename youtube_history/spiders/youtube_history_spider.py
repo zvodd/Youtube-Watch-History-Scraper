@@ -1,11 +1,11 @@
 import scrapy
 from scrapy.utils.project import get_project_settings
-from youtube_history.items import YoutubeHistoryItem
 from youtube_history.request_object_parser import ChromeRequest
 from scrapy.http.cookies import CookieJar
 from lxml import html
 from youtube_history.cookie_import import parse_cookies
 import json
+import sys
 
 class YoutubeHistorySpider(scrapy.Spider):
     my_base_url = 'https://www.youtube.com'
@@ -102,34 +102,39 @@ class YoutubeHistorySpider(scrapy.Spider):
             else:
                 date = None
             
-            video_fragments = day.cssselect('li div.yt-lockup-video')
-            for entry in video_fragments:
-                hitem = YoutubeHistoryItem()
-
-                hitem['date'] = date
+            video_container = day.cssselect('li div.yt-lockup-video')
+            for entry in video_container:
+                video_information = {
+                    "date": date,
+                    "title": "",
+                    "description": "",
+                    "duration": "",
+                    "video_url": "",
+                    "channel": "",
+                    "channel_url": "",
+                }
 
                 title_element = entry.cssselect("h3.yt-lockup-title a.yt-uix-tile-link")
                 if len(title_element) == 1:
                     title_element = title_element[0]
-                    hitem['title'] = title_element.get('title')
-                    hitem['vid'] = "https://www.youtube.com" + title_element.get('href')
+                    video_information['title'] = title_element.get('title')
+                    video_information['video_url'] = "https://www.youtube.com" + title_element.get('href')
 
                 user_el = entry.cssselect('div.yt-lockup-byline a')
                 if len(user_el) == 1:
                     user_el = user_el[0]
-                    hitem['channel'] = user_el.text_content()
-                    hitem['channel_url'] = "https://www.youtube.com" + user_el.get('href')
+                    video_information['channel'] = user_el.text_content()
+                    video_information['channel_url'] = "https://www.youtube.com" + user_el.get('href')
 
                 descp_el = entry.cssselect('div.yt-lockup-description')
                 if len(descp_el) == 1:
                     descp_el = descp_el[0]
-                    hitem['description'] = descp_el.text_content()
+                    video_information['description'] = descp_el.text_content()
                 else:
-                    hitem['description'] = None
+                    video_information['description'] = None
 
                 vtime_el = entry.cssselect('span.video-time')
                 if len(vtime_el) == 1:
-                    hitem['time'] = vtime_el[0].text
+                    video_information['duration'] = vtime_el[0].text
 
-                    
-                yield hitem
+                yield video_information

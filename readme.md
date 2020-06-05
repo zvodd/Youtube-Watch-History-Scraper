@@ -41,7 +41,7 @@ The `-L` argument will output errors.
 
 The CSV is output in the following format:
 
-| Channel Name | Channel URL | Date | Description | Time (in seconds) | Title | Video URL |
+| Date | Title | Description | Duration | Video URL | Channel Name | Channel URL |
 |--|--|--|--|--|--|--|
 
 
