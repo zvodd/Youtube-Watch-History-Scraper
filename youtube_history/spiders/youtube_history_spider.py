@@ -94,47 +94,48 @@ class YoutubeHistorySpider(scrapy.Spider):
     def sub_parse_video_entries(self, page_contents):
         """Method that parses the HTML bodies of the response objects"""
         etree = html.fromstring(page_contents)
-        day_fragments = etree.cssselect("li ol.item-section")
-        for day in day_fragments:
-            date_el = day.cssselect("li.item-section-header h3")
-            if len(date_el) == 1:
-                date = date_el[0].text_content()
-            else:
-                date = None
+
+        day_containers = etree.cssselect("li ol.item-section")
+        for day in day_containers:
+            date = None
+
+            date_element = day.cssselect("li.item-section-header h3")
+            if len(date_element) == 1:
+                date = date_element[0].text_content()
             
             video_container = day.cssselect('li div.yt-lockup-video')
-            for entry in video_container:
+            for video in video_container:
                 video_information = {
                     "date": date,
                     "title": "",
                     "description": "",
                     "duration": "",
+                    "views": "",
                     "video_url": "",
                     "channel": "",
                     "channel_url": "",
                 }
 
-                title_element = entry.cssselect("h3.yt-lockup-title a.yt-uix-tile-link")
+                # Find Title and Video URL
+                title_element = video.cssselect("h3.yt-lockup-title a.yt-uix-tile-link")
                 if len(title_element) == 1:
-                    title_element = title_element[0]
-                    video_information['title'] = title_element.get('title')
-                    video_information['video_url'] = "https://www.youtube.com" + title_element.get('href')
+                    video_information['title'] = title_element[0].get('title')
+                    video_information['video_url'] = "https://www.youtube.com" + title_element[0].get('href')
 
-                user_el = entry.cssselect('div.yt-lockup-byline a')
-                if len(user_el) == 1:
-                    user_el = user_el[0]
-                    video_information['channel'] = user_el.text_content()
-                    video_information['channel_url'] = "https://www.youtube.com" + user_el.get('href')
+                # Find Description
+                description_element = video.cssselect('div.yt-lockup-description')
+                if len(description_element) == 1:
+                    video_information['description'] = description_element[0].text_content()
 
-                descp_el = entry.cssselect('div.yt-lockup-description')
-                if len(descp_el) == 1:
-                    descp_el = descp_el[0]
-                    video_information['description'] = descp_el.text_content()
-                else:
-                    video_information['description'] = None
+                # Find Duration
+                time_element = video.cssselect('span.video-time')
+                if len(time_element) == 1:
+                    video_information['duration'] = time_element[0].text
 
-                vtime_el = entry.cssselect('span.video-time')
-                if len(vtime_el) == 1:
-                    video_information['duration'] = vtime_el[0].text
+                # Find Channel and Channel URL
+                user_element = video.cssselect('div.yt-lockup-byline a')
+                if len(user_element) == 1:
+                    video_information['channel'] = user_element[0].text_content()
+                    video_information['channel_url'] = "https://www.youtube.com" + user_element[0].get('href')
 
                 yield video_information
