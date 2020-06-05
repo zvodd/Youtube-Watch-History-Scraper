@@ -50,21 +50,23 @@ class CleanUpHistoryEntriesPipeline(object):
 
 class ConvertVideoTimePipeline(object):
     def process_item(self, item, spider):
-        item['time'] = self.convert_time(item['time'])
+        if 'time' in item:
+            item['time'] = self.convert_time_to_seconds(item['time'])
         return item
 
-    def convert_time(self, tstring):
-        seconds, minutes, hours = None, None, None
+    def convert_time_to_seconds(self, time):
         total_seconds = 0
-        t_components = tstring.strip().split(':')
-        for i, comp in enumerate(reversed(t_components)):
-            if i == 0:
-                seconds = int(comp)
+        splitted_time = time.strip().split(':')
+
+        for index, time_digit in enumerate(reversed(splitted_time)):
+            if index == 0:
+                seconds = int(time_digit)
                 total_seconds = seconds
-            if i == 1:
-                minutes = int(comp)
+            if index == 1:
+                minutes = int(time_digit)
                 total_seconds += minutes * 60
-            if i == 2:
-                hours = int(comp)
+            if index == 2:
+                hours = int(time_digit)
                 total_seconds += hours * 3600
+
         return total_seconds
