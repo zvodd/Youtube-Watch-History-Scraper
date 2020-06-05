@@ -1,11 +1,16 @@
 import scrapy
-from scrapy.utils.project import get_project_settings
-from youtube_history.request_object_parser import ChromeRequest
 from scrapy.http.cookies import CookieJar
-from lxml import html
+from scrapy.utils.project import get_project_settings
+
+from youtube_history.request_object_parser import ChromeRequest
 from youtube_history.cookie_import import parse_cookies
+
+from lxml import html
+
 import json
+import re
 import sys
+
 
 class YoutubeHistorySpider(scrapy.Spider):
     my_base_url = 'https://www.youtube.com'
@@ -99,6 +104,7 @@ class YoutubeHistorySpider(scrapy.Spider):
         for day in day_containers:
             date = None
 
+            # Find actual container's Date
             date_element = day.cssselect("li.item-section-header h3")
             if len(date_element) == 1:
                 date = date_element[0].text_content()
@@ -130,7 +136,15 @@ class YoutubeHistorySpider(scrapy.Spider):
                 # Find Duration
                 time_element = video.cssselect('span.video-time')
                 if len(time_element) == 1:
-                    video_information['duration'] = time_element[0].text
+                    video_information['duration'] = time_element[0].text_content()
+                
+                # Find Views
+                views_element = video.cssselect('ul.yt-lockup-meta-info li')
+                if len(views_element) == 1:
+                    views = views_element[0].text_content()
+                    # Remove non-numeric characters from views
+                    views = re.sub('[^0-9]', '', views)
+                    video_information['views'] = views
 
                 # Find Channel and Channel URL
                 user_element = video.cssselect('div.yt-lockup-byline a')
