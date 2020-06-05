@@ -17,7 +17,6 @@ DOWNLOADER_MIDDLEWARES = {
 	'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware' : 500
 }
 ITEM_PIPELINES = {
-    'youtube_history.pipelines.ConvertVideoTimePipeline': 301,
     'youtube_history.pipelines.CleanUpHistoryEntriesPipeline': 302,
 }
 

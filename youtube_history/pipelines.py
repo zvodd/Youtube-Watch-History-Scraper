@@ -10,38 +10,43 @@ import string
 
 class ConvertDatesPipeline(object):
     def process_item(self, item, spider):
-        item['date'] = self.date_parsing(item['date'])
+        if 'date' in item:
+            item['date'] = self.date_parsing(item['date'])
+            
         return item
 
-    def date_parsing(self, datestring):
+    def date_parsing(self, date_string):
         # Date string is converted from MMM DD, YYYY to MM/DD/YYYY
         # TODO: Handle the parsing for upto one week prior to scraping date which is in the format of Tuesday, Friday, etc
-        if "Jan" in datestring:
-            formatteddate = "01"
-        if "Feb" in datestring:
-            formatteddate = "02"
-        if "Mar" in datestring:
-            formatteddate = "03"
-        if "Apr" in datestring:
-            formatteddate = "04"
-        if "May" in datestring:
-            formatteddate = "05"
-        if "Jun" in datestring:
-            formatteddate = "06"
-        if "Jul" in datestring:
-            formatteddate = "07"
-        if "Aug" in datestring:
-            formatteddate = "08"
-        if "Sep" in datestring:
-            formatteddate = "09"
-        if "Oct" in datestring:
-            formatteddate = "10"
-        if "Nov" in datestring:
-            formatteddate = "11"
-        if "Dec" in datestring:
-            formatteddate = "12"
-        formatteddate = formatteddate + "/" + "/".join(datestring[4:].split(", "))
-        return formatteddate
+        formatted_date = ''
+       
+        if "Jan" in date_string:
+            formatted_date = "01"
+        if "Feb" in date_string:
+            formatted_date = "02"
+        if "Mar" in date_string:
+            formatted_date = "03"
+        if "Apr" in date_string:
+            formatted_date = "04"
+        if "May" in date_string:
+            formatted_date = "05"
+        if "Jun" in date_string:
+            formatted_date = "06"
+        if "Jul" in date_string:
+            formatted_date = "07"
+        if "Aug" in date_string:
+            formatted_date = "08"
+        if "Sep" in date_string:
+            formatted_date = "09"
+        if "Oct" in date_string:
+            formatted_date = "10"
+        if "Nov" in date_string:
+            formatted_date = "11"
+        if "Dec" in date_string:
+            formatted_date = "12"
+
+        formatted_date = formatted_date + "/" + "/".join(date_string[4:].split(", "))
+        return formatted_date
 
 class CleanUpHistoryEntriesPipeline(object):
     def proccess_items(self, item, spider):
