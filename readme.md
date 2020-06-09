@@ -5,7 +5,7 @@ After Youtube's API V3, there is no practical way to retrieve a user's complete 
 
 This is a fork of [zvodd's scraper](https://github.com/zvodd/Youtube-Watch-History-Scraper).
 
-**Privacy Notice: This tool download the watch history to a local file. The data is never linked to a a database or other services.**
+**Privacy Notice: This tool download the watch history to a local file. The data is never linked to a database or other services.**
 
 ## Dependencies
 
@@ -41,7 +41,7 @@ The `-L` argument will output errors.
 
 The CSV is output in the following format:
 
-| Date | Title | Description | Duration | Video URL | Channel Name | Channel URL |
+| Date | Title | Description | Duration | Views | Video URL | Channel Name | Channel URL |
 |--|--|--|--|--|--|--|
 
 

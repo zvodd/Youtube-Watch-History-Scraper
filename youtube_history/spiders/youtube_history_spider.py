@@ -5,6 +5,8 @@ from scrapy.utils.project import get_project_settings
 from youtube_history.request_object_parser import ChromeRequest
 from youtube_history.cookie_import import parse_cookies
 
+from youtube_history.parse_date import find_last_date_from_string
+
 from lxml import html
 
 import json
@@ -108,6 +110,8 @@ class YoutubeHistorySpider(scrapy.Spider):
             date_element = day.cssselect("li.item-section-header h3")
             if len(date_element) == 1:
                 date = date_element[0].text_content()
+
+                date = find_last_date_from_string(date)
             
             video_container = day.cssselect('li div.yt-lockup-video')
             for video in video_container:
