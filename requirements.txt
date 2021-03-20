@@ -23,7 +23,7 @@ queuelib==1.5.0
 Scrapy==1.5.1
 service-identity==18.1.0
 six==1.12.0
-SQLAlchemy==1.2.15
+SQLAlchemy==1.3.0
 Twisted==18.9.0
 w3lib==1.19.0
 zope.interface==4.6.0
