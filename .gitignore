@@ -1,5 +1,9 @@
+output/*
+
 *.pyc
 *.db
+*.csv
+
 lasterror.log
 youtube_cookies.json
-*.csv
+youtube_request_headers.txt

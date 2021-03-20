@@ -1,12 +1,18 @@
 import scrapy
-from scrapy.utils.project import get_project_settings
-# from ipdb import set_trace as debug
-from youtube_history.items import YoutubeHistoryItem
-from youtube_history.request_object_parser import ChromeRequest
 from scrapy.http.cookies import CookieJar
-from lxml import html
+from scrapy.utils.project import get_project_settings
+
+from youtube_history.request_object_parser import ChromeRequest
 from youtube_history.cookie_import import parse_cookies
+
+from youtube_history.parse_date import find_last_date_from_string
+
+from lxml import html
+
 import json
+import re
+import sys
+
 
 class YoutubeHistorySpider(scrapy.Spider):
     my_base_url = 'https://www.youtube.com'
@@ -14,7 +20,7 @@ class YoutubeHistorySpider(scrapy.Spider):
 
     nextlink_egg = 'data-uix-load-more-href="/browse_ajax?action_continuation'
     
-    name = 'yth_spider'
+    name = 'youtube_history'
     def __init__(self, *args, **kwargs):
         super(YoutubeHistorySpider, self).__init__(*args, **kwargs)
         settings = get_project_settings()
@@ -91,37 +97,63 @@ class YoutubeHistorySpider(scrapy.Spider):
                            reason='No history content returned on json request.')
 
 
+    # TODO: Clean up this part. Add comments, Refactor variables name
     def sub_parse_video_entries(self, page_contents):
         """Method that parses the HTML bodies of the response objects"""
         etree = html.fromstring(page_contents)
-        day_fragments = etree.cssselect("li ol.item-section")
-        for day in day_fragments:
-            date_el = day.cssselect("li.item-section-header h3")
-            if len(date_el) == 1:
-                date = date_el[0].text_content()
-            else:
-                date = None
-            video_fragments = day.cssselect('li div.yt-lockup-video')
-            for entry in video_fragments:
-                hitem = YoutubeHistoryItem()
-                hitem['date'] = date
-                title_element = entry.cssselect("h3.yt-lockup-title a.yt-uix-tile-link")
+
+        day_containers = etree.cssselect("li ol.item-section")
+        for day in day_containers:
+            date = None
+
+            # Find actual container's Date
+            date_element = day.cssselect("li.item-section-header h3")
+            if len(date_element) == 1:
+                date = date_element[0].text_content()
+
+                date = find_last_date_from_string(date)
+            
+            video_container = day.cssselect('li div.yt-lockup-video')
+            for video in video_container:
+                video_information = {
+                    "date": date,
+                    "title": "",
+                    "description": "",
+                    "duration": "",
+                    "views": "",
+                    "video_url": "",
+                    "channel": "",
+                    "channel_url": "",
+                }
+
+                # Find Title and Video URL
+                title_element = video.cssselect("h3.yt-lockup-title a.yt-uix-tile-link")
                 if len(title_element) == 1:
-                    title_element = title_element[0]
-                    hitem['title'] = title_element.get('title')
-                    hitem['vid'] = "https://www.youtube.com" + title_element.get('href')
-                user_el = entry.cssselect('div.yt-lockup-byline a')
-                if len(user_el) == 1:
-                    user_el = user_el[0]
-                    hitem['channel'] = user_el.text_content()
-                    hitem['channel_url'] = "https://www.youtube.com" + user_el.get('href')
-                descp_el = entry.cssselect('div.yt-lockup-description')
-                if len(descp_el) == 1:
-                    descp_el = descp_el[0]
-                    hitem['description'] = descp_el.text_content()
-                else:
-                    hitem['description'] = None
-                vtime_el = entry.cssselect('span.video-time')
-                if len(vtime_el) == 1:
-                    hitem['time'] = vtime_el[0].text
-                yield hitem
+                    video_information['title'] = title_element[0].get('title')
+                    video_information['video_url'] = "https://www.youtube.com" + title_element[0].get('href')
+
+                # Find Description
+                description_element = video.cssselect('div.yt-lockup-description')
+                if len(description_element) == 1:
+                    video_information['description'] = description_element[0].text_content()
+
+                # Find Duration
+                time_element = video.cssselect('span.video-time')
+                if len(time_element) == 1:
+                    video_information['duration'] = time_element[0].text_content()
+                
+                # Find Views
+                views_element = video.cssselect('ul.yt-lockup-meta-info li')
+                if len(views_element) == 1:
+                    views = views_element[0].text_content()
+                    # Remove non-numeric characters from views
+                    views = re.sub('[^0-9]', '', views)
+                    video_information['views'] = views
+
+                # Find Channel and Channel URL
+                user_element = video.cssselect('div.yt-lockup-byline a')
+                if len(user_element) == 1:
+                    video_information['channel'] = user_element[0].text_content()
+                    video_information['channel_url'] = "https://www.youtube.com" + user_element[0].get('href')
+
+                yield video_information
