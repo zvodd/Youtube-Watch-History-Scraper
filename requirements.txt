@@ -3,7 +3,7 @@ attrs==18.2.0
 Automat==0.7.0
 cffi==1.11.5
 constantly==15.1.0
-cryptography==2.4.2
+cryptography==3.3.2
 cssselect==1.0.3
 enum34==1.1.6
 functools32==3.2.3.post2
