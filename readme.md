@@ -1,3 +1,13 @@
+# ARCHIVAL NOTICE
+
+YouTube's front end has changed significantly, requiring JavaScript rendering of pages for web scraping. Considering this I am no longer maintaining this code base. As it was primarily just an example of a somewhat advanced Scrapy spider project.
+
+As such, I won't be accepting pull requests or continuing development.
+
+If you have an alternative project filling this niche, I will happy link it here:
+
+(YouTube API V3)[https://developers.google.com/youtube/v3/docs?hl=en#Playlists}
+
 # Youtube History Scraper
 
 This tool can be used to scrape YouTube history after their history API changed to only allow fetching the last two weeks' worth of data. There might exist a project to use that API periodically to log history from a certain time onwards
